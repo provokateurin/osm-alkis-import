@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add a WMS source</title>
+    <meta property="og:description" content="Add an external Web Map Service raster layer to the map using addSource's tiles option." />
+    <meta charset='utf-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js'></script>
+    <style>
+        body { margin: 0; padding: 0; }
+        html, body, #map { height: 100%; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://demotiles.maplibre.org/style.json',
+        zoom: 1,
+        center: [0, 0]
+    });
+
+    map.on('load', async () => {
+        /*
+        map.addSource('wms-test-source', {
+            'type': 'raster',
+            'tiles': [
+                'https://www.wms.nrw.de/geobasis/wms_nw_dop?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image/png&TRANSPARENT=true&LAYERS=nw_dop_rgb&CRS=EPSG:3857&BBOX={bbox-epsg-3857}&HEIGHT=256&WIDTH=256'
+            ],
+            'tileSize': 256
+        });
+        map.addLayer(
+            {
+                'id': 'wms-test-layer',
+                'type': 'raster',
+                'source': 'wms-test-source',
+                'paint': {}
+            }
+        );
+         */
+
+        const response = await fetch('/task/next');
+        const body = await response.json();
+        console.log(body);
+
+        map.addSource('task', {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': JSON.parse(body.alkis_geom),
+            }
+        });
+        map.addLayer({
+            'id': 'task',
+            'type': 'fill',
+            'source': 'task',
+            'layout': {},
+            'paint': {
+                'fill-color': '#088',
+                'fill-opacity': 0.8
+            }
+        });
+    });
+</script>
+</body>
+</html>

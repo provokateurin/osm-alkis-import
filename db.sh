@@ -14,4 +14,6 @@ while ! pg_isready --host=localhost --user=postgres; do
   sleep 1s
 done
 
+psql --host=localhost --user=postgres --file=schema.sql
+
 sleep infinity
